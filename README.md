@@ -1,0 +1,2 @@
+# scarab
+ Terminal-based notetaking.
