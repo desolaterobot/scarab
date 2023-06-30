@@ -1,2 +1,2 @@
 # scarab
- Terminal-based notetaking.
+## Terminal-based encrypted notetaking.
