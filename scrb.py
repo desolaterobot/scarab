@@ -121,20 +121,18 @@ def uninstallProcedure():
 ###########################################################################
 
 globalDir = os.path.expanduser("~")+"/AppData/Local/Scarab"
-globalKey = "PjUYNENTBSGja15yQdPSzwNls-PKBWPRBrHDyxCdsFY="
+globalKey = None
 
 #first time setup, create the directory and all the things in it, if havent.
 try:
-    print("First time setup... please wait.")
     os.mkdir(globalDir)
-    status = "N"
+    password = input("First time setup... please choose a password.")
     empty = {
-        "exists" : True,
+        "password" : password,
         "notes" : []
     }
     emptyStr = str(empty)
     open(globalDir + "/" + "scarabData", "wb").write(Fernet(globalKey).encrypt(emptyStr.encode()))
-    open(globalDir + "/" + "scarabStatus", "w").write(status)
 except:
     pass
 
@@ -180,9 +178,6 @@ while True:
         helpProcedure()
     elif inp == 'wipe':
         wipeProcedure()
-    elif inp == 'lock':
-        pass
-        #lockProcedure()
     elif inp == 'e':
         sys.exit()
     elif inp == 'show':
