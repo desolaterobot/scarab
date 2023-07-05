@@ -125,7 +125,7 @@ globalKey = "PjUYNENTBSGja15yQdPSzwNls-PKBWPRBrHDyxCdsFY="
 
 #first time setup, create the directory and all the things in it, if havent.
 try:
-    print("first time setup...")
+    print("First time setup... please wait.")
     os.mkdir(globalDir)
     status = "N"
     empty = {
@@ -137,11 +137,6 @@ try:
     open(globalDir + "/" + "scarabStatus", "w").write(status)
 except:
     pass
-#check if password is required. get input and generate the key for now.
-passRequired = (open(globalDir + "/" + "scarabStatus", "r").read() == "Y")
-if passRequired:
-    inp = input("Enter password: ")
-    globalKey = generateKey(inp)
 
 try:
     trying = getData()['exists']
