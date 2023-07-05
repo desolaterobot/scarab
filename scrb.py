@@ -125,6 +125,7 @@ globalKey = "PjUYNENTBSGja15yQdPSzwNls-PKBWPRBrHDyxCdsFY="
 
 #first time setup, create the directory and all the things in it, if havent.
 try:
+    print("first time setup...")
     os.mkdir(globalDir)
     status = "N"
     empty = {
