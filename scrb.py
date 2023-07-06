@@ -172,7 +172,7 @@ if isPassProtected:
     while True:
         #get password from user.
         passw = input("Enter password: ")
-        globalKey = generateKey('passw')
+        globalKey = generateKey(passw)
         #verify if password is correct.
         try:
             if type(getData()['notes'] == list):
