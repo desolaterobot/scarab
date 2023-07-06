@@ -6,6 +6,9 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import base64
 
+globalDir = os.path.expanduser("~")+"/AppData/Local/Scarab"
+globalKey = 'T6B-cbd3e3w1K6Yc2CW9GEk7Iry7L079GGsU9c92-34=' #default key, if no password given.
+
 def generateKey(seed):
     seed_bytes = str(seed).encode()  # Convert seed to bytes
     kdf = PBKDF2HMAC(
@@ -16,11 +19,15 @@ def generateKey(seed):
     )
     return base64.urlsafe_b64encode(kdf.derive(seed_bytes))
 
-def getData():
+def getData()->dict:
     return eval(Fernet(globalKey).decrypt(open(globalDir + "/" + "scarabData", "rb").read()).decode())
 
-def setData(data):
+def setData(data: dict):
     open(globalDir + "/" + "scarabData", "wb").write(Fernet(globalKey).encrypt(str(data).encode()))
+
+def reEncrypt(oldKey, newKey):
+    dat = eval(Fernet(oldKey).decrypt(open(globalDir + "/" + "scarabData", "rb").read()).decode())
+    open(globalDir + "/" + "scarabData", "wb").write(Fernet(newKey).encrypt(str(dat).encode()))
 
 def showNotes():
     dat = getData()
@@ -77,10 +84,10 @@ def removeProcedure():
     title = dat['notes'][ind-1]['title']
     del dat['notes'][ind-1]
     setData(dat)
-    print(f'Deleted note with title {title}\n')
+    print(f'Deleted note with title: {title}\n')
 
 def wipeProcedure():
-    print('Are you sure you want to clear all your notes? (y/n)')
+    print('Are you sure you want to clear all your notes? (Y/N)')
     ans = input('>> ')
     while True:
         if ans == 'y' or ans == 'Y':
@@ -89,7 +96,7 @@ def wipeProcedure():
             setData(dat)
             break
         elif ans == 'n' or ans == 'N':
-            break
+            return
     print('Data wiped.\n')
 
 def helpProcedure():
@@ -105,7 +112,7 @@ def helpProcedure():
     
 def uninstallProcedure():
     print("You will uninstall all of Scarab, along with all saved notes.")
-    print("Continue? Y/N")
+    print("Continue? (Y/N)")
     inp = input(">> ")
     if inp == 'y' or inp == 'Y':
         for file in os.listdir(globalDir):
@@ -115,31 +122,68 @@ def uninstallProcedure():
         os.remove(os.getcwd() + "/scrb.py")
         sys.exit()
     else:
-        print()
         return
 
-###########################################################################
+def lockProcedure():
+    global globalKey
+    global globalDir
+    passw = input("Enter a password to lock your notes: ")
+    newKey = generateKey(passw)
+    reEncrypt(globalKey, newKey)
+    globalKey = newKey
+    open(globalDir + "/" + "scarabStatus", "w").write("Y")
+    print(f'Data successfully locked with password {passw}\n')
 
-globalDir = os.path.expanduser("~")+"/AppData/Local/Scarab"
-globalKey = None
+def unlockProcedure():
+    global globalKey
+    global globalDir
+    print('Your notes will no longer by password-protected.')
+    print('Are you sure you want to continue? (Y/N)')
+    ans = input('>> ')
+    while True:
+        if ans == 'y' or ans == 'Y':
+            newKey = 'T6B-cbd3e3w1K6Yc2CW9GEk7Iry7L079GGsU9c92-34='
+            reEncrypt(globalKey, newKey)
+            open(globalDir + "/" + "scarabStatus", "w").write("N")
+            print("Notes successfully unlocked.")
+            return
+        else:
+            return
+
+###########################################################################
 
 #first time setup, create the directory and all the things in it, if havent.
 try:
     os.mkdir(globalDir)
-    password = input("First time setup... please choose a password.")
+    password = input("First time setup.")
     empty = {
-        "password" : password,
         "notes" : []
     }
     emptyStr = str(empty)
-    open(globalDir + "/" + "scarabData", "wb").write(Fernet(globalKey).encrypt(emptyStr.encode()))
+    open(globalDir + "/" + "scarabData", "wb").write(Fernet(globalKey).encrypt(emptyStr.encode())) #creation of data file
+    open(globalDir + "/" + "scarabStatus", "w").write("N") #creation of status file, indicates if notebook is password protected.
 except:
     pass
 
-try:
-    trying = getData()['exists']
-except:
-    print("Wrong password.")
+#is notes password protected? if so, get the password first.
+
+isPassProtected = open(globalDir+"/"+"scarabStatus", "r").read() == "Y"
+if isPassProtected:
+    while True:
+        #get password from user.
+        passw = input("Enter password: ")
+        globalKey = generateKey('passw')
+        #verify if password is correct.
+        try:
+            if type(getData()['notes'] == list):
+                print('Login successful.')
+                break
+            else:
+                print('Login unsuccessful. Try again.')
+        except:
+            print('Login unsuccessful. Try again.')
+
+#password protection cleared.
 
 ###########################################################################
 
@@ -182,6 +226,8 @@ while True:
         sys.exit()
     elif inp == 'show':
         showNotes()
+    elif inp == 'lock':
+        lockProcedure()
     else:
         print('Unknown command. \n')
     if noArgs:
