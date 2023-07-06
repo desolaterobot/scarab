@@ -105,8 +105,9 @@ def helpProcedure():
     print('add - add a note')
     print('remove - remove a note')
     print('wipe - delete all notes')
-    #print('lock - lock this program with a passcode')
-    #print('uninstall - delete this whole program, along with stored data.')
+    print('lock - lock this program with a passcode')
+    print('unlock - get rid of the passcode restriction')
+    print('uninstall - delete this whole program, along with stored data.')
     print('e - exit')
     print("----------------COMMAND-LIST------------------\n")
     
@@ -122,6 +123,7 @@ def uninstallProcedure():
         os.remove(os.getcwd() + "/scrb.py")
         sys.exit()
     else:
+        print()
         return
 
 def lockProcedure():
@@ -145,9 +147,10 @@ def unlockProcedure():
             newKey = 'T6B-cbd3e3w1K6Yc2CW9GEk7Iry7L079GGsU9c92-34='
             reEncrypt(globalKey, newKey)
             open(globalDir + "/" + "scarabStatus", "w").write("N")
-            print("Notes successfully unlocked.")
+            print("Notes successfully unlocked.\n")
             return
         else:
+            print()
             return
 
 ###########################################################################
@@ -228,6 +231,8 @@ while True:
         showNotes()
     elif inp == 'lock':
         lockProcedure()
+    elif inp == 'unlock':
+        unlockProcedure()
     else:
         print('Unknown command. \n')
     if noArgs:
