@@ -17,4 +17,4 @@ Like all .exe files, setting the folder as a system variable path, would enable 
 4. File 'System Variables' and double-click on 'Path'.
 5. Add the path to the folder that contains this `scrb.exe` file. If you downloaded Scarab recently and did not move things around, this folder SHOULD be located in your Downloads folder: `C:\Users\<yourname>\Downloads`
 
-You can now immediately execute Scarab commands directly into terminal. For example, typing `scrb add` into Command Prompt would immediately add a note. Same goes for all other commands, just remember to type `scrb` in front of the command. This enables you to access Scarab functions quickly as long as you have the terminal on, as such as coding.
+You can now immediately execute Scarab commands directly into terminal. For example, typing `scrb add` into Command Prompt would immediately add a note. Same goes for all other commands, just remember to type `scrb` in front. This enables you to access Scarab functions quickly in situations where your terminal is always open, such as when you are coding.
